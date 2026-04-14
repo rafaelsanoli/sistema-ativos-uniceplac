@@ -1,5 +1,6 @@
 import { Module } from '@nestjs/common';
 import { MongooseModule } from '@nestjs/mongoose';
+import { AuthModule } from '../auth/auth.module';
 import {
   Equipment,
   EquipmentSchema,
@@ -9,6 +10,7 @@ import { ReportsService } from './reports.service';
 
 @Module({
   imports: [
+    AuthModule,
     MongooseModule.forFeature([
       {
         name: Equipment.name,

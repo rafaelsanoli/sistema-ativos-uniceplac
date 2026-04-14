@@ -94,7 +94,7 @@ Realizada pela propria interface, no card de resumo operacional:
 - Tratamento de erro com respostas apropriadas e mensagens funcionais no frontend.
 - Separacao de responsabilidades (controller, service, schema, dto).
 - Autenticacao e autorizacao por guard JWT.
-- Middleware de seguranca (`helmet`, `mongo-sanitize`, `throttler`).
+- Middleware de seguranca (`helmet` e `throttler`).
 - Query otimizada com pagina, limite e indices no MongoDB.
 - Padrao de codigo validado com ESLint.
 

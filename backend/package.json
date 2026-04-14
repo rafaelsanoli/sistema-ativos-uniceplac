@@ -32,7 +32,6 @@
     "class-validator": "^0.15.1",
     "compression": "^1.8.1",
     "cookie-parser": "^1.4.7",
-    "express-mongo-sanitize": "^2.2.0",
     "helmet": "^8.1.0",
     "joi": "^18.1.2",
     "mongoose": "^9.4.1",

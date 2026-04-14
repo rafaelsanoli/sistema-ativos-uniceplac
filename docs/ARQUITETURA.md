@@ -25,7 +25,6 @@ O frontend consome a API via HTTP e a API persiste dados no MongoDB.
 
 - `ValidationPipe` global com whitelist e transform.
 - `helmet` para headers de seguranca.
-- `express-mongo-sanitize` para proteger contra query injection.
 - `@nestjs/throttler` para rate limit global.
 - `compression` para resposta HTTP otimizada.
 - JWT em cookie HttpOnly para sessao protegida.

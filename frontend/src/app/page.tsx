@@ -74,7 +74,7 @@ const INITIAL_FORM: FormData = {
 };
 
 const INITIAL_LOGIN: LoginForm = {
-  email: "admin@uniceplac.local",
+  email: "admin@uniceplac.com",
   password: "",
 };
 

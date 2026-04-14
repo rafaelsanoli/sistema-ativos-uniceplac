@@ -10,7 +10,7 @@ Base URL local: `http://localhost:3001`
 
 ```json
 {
-  "email": "admin@uniceplac.local",
+  "email": "admin@uniceplac.com",
   "password": "admin12345"
 }
 ```

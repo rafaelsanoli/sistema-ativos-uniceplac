@@ -41,9 +41,8 @@ Implementei autenticacao JWT com cookie HttpOnly para reduzir exposicao de token
 Foram adicionados:
 
 1. `helmet` para headers de seguranca.
-2. `express-mongo-sanitize` para higienizacao de payloads.
-3. `@nestjs/throttler` para rate limit global.
-4. `compression` para reduzir custo de trafego.
+2. `@nestjs/throttler` para rate limit global.
+3. `compression` para reduzir custo de trafego.
 
 ## 10. Otimizacao de consultas
 
