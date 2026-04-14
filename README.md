@@ -96,6 +96,7 @@ Realizada pela propria interface, no card de resumo operacional:
 - Autenticacao e autorizacao por guard JWT.
 - Middleware de seguranca (`helmet` e `throttler`).
 - Query otimizada com pagina, limite e indices no MongoDB.
+- Suite de testes com cenarios unitarios para servicos criticos e e2e de autenticacao.
 - Padrao de codigo validado com ESLint.
 
 ## 8. Documentacao complementar

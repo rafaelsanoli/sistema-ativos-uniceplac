@@ -60,7 +60,14 @@ Na inicializacao, um usuario admin e criado automaticamente com `ADMIN_EMAIL` e 
 ```bash
 npm run build
 npm run lint
+npm test
+npm run test:e2e
 ```
+
+## Escopo atual de testes
+
+- Unitarios: `AuthService`, `EquipmentsService` e `ReportsService`.
+- E2E: fluxo de autenticacao via `AuthController`.
 
 ## Endpoints
 
