@@ -4,6 +4,7 @@ import { APP_GUARD } from '@nestjs/core';
 import { MongooseModule } from '@nestjs/mongoose';
 import * as Joi from 'joi';
 import { ThrottlerGuard, ThrottlerModule } from '@nestjs/throttler';
+import { AuthModule } from './auth/auth.module';
 import { EquipmentsModule } from './equipments/equipments.module';
 
 @Module({
@@ -45,6 +46,7 @@ import { EquipmentsModule } from './equipments/equipments.module';
         uri: configService.getOrThrow<string>('MONGODB_URI'),
       }),
     }),
+    AuthModule,
     EquipmentsModule,
   ],
   providers: [

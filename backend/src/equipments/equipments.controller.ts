@@ -9,13 +9,16 @@ import {
   Patch,
   Post,
   Query,
+  UseGuards,
 } from '@nestjs/common';
+import { JwtAuthGuard } from '../auth/guards/jwt-auth.guard';
 import { CreateEquipmentDto } from './dto/create-equipment.dto';
 import { FilterEquipmentDto } from './dto/filter-equipment.dto';
 import { UpdateEquipmentDto } from './dto/update-equipment.dto';
 import { EquipmentsService } from './equipments.service';
 
 @Controller('equipments')
+@UseGuards(JwtAuthGuard)
 export class EquipmentsController {
   constructor(private readonly equipmentsService: EquipmentsService) {}
 
