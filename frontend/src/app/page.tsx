@@ -461,6 +461,10 @@ export default function Home() {
             Entre com credenciais administrativas para acessar os recursos de
             cadastro, relatorios e exportacao de dados.
           </p>
+          <p className="login-hint">
+            Use as credenciais configuradas em ADMIN_EMAIL e ADMIN_PASSWORD no
+            backend.
+          </p>
 
           <form className="form-grid" onSubmit={handleLogin}>
             <label>

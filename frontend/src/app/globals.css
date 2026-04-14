@@ -135,6 +135,13 @@ h2 {
   max-width: 66ch;
 }
 
+.login-hint {
+  margin-top: 10px;
+  font-size: 0.84rem;
+  color: var(--secondary);
+  font-family: var(--font-space-mono), monospace;
+}
+
 .hero-meta {
   margin-top: 18px;
   display: flex;
