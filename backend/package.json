@@ -17,10 +17,7 @@
     "test:watch": "jest --watch",
     "test:cov": "jest --coverage",
     "test:debug": "node --inspect-brk -r tsconfig-paths/register -r ts-node/register node_modules/.bin/jest --runInBand",
-    "test:e2e": "jest --config ./test/jest-e2e.json",
-    "export:json": "ts-node src/scripts/export-equipments.ts json",
-    "export:csv": "ts-node src/scripts/export-equipments.ts csv",
-    "export:all": "ts-node src/scripts/export-equipments.ts all"
+    "test:e2e": "jest --config ./test/jest-e2e.json"
   },
   "dependencies": {
     "@nestjs/common": "^11.0.1",

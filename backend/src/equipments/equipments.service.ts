@@ -8,6 +8,10 @@ import { EquipmentStatus } from './enums/equipment-status.enum';
 import { EquipmentType } from './enums/equipment-type.enum';
 import { Equipment } from './schemas/equipment.schema';
 
+function escapeRegex(input: string) {
+  return input.replace(/[.*+?^${}()|[\]\\]/g, '\\$&');
+}
+
 @Injectable()
 export class EquipmentsService {
   constructor(
@@ -31,6 +35,10 @@ export class EquipmentsService {
       name?: { $regex: string; $options: string };
     } = {};
 
+    const page = filters.page ?? 1;
+    const limit = filters.limit ?? 10;
+    const skip = (page - 1) * limit;
+
     if (filters.type) {
       query.type = filters.type;
     }
@@ -40,10 +48,35 @@ export class EquipmentsService {
     }
 
     if (filters.search) {
-      query.name = { $regex: filters.search, $options: 'i' };
+      const normalizedSearch = filters.search.trim().slice(0, 60);
+      if (normalizedSearch.length >= 2) {
+        query.name = {
+          $regex: escapeRegex(normalizedSearch),
+          $options: 'i',
+        };
+      }
     }
 
-    return this.equipmentModel.find(query).sort({ createdAt: -1 }).exec();
+    const [total, data] = await Promise.all([
+      this.equipmentModel.countDocuments(query).exec(),
+      this.equipmentModel
+        .find(query)
+        .sort({ createdAt: -1 })
+        .skip(skip)
+        .limit(limit)
+        .lean()
+        .exec(),
+    ]);
+
+    return {
+      data,
+      meta: {
+        total,
+        page,
+        limit,
+        totalPages: Math.max(1, Math.ceil(total / limit)),
+      },
+    };
   }
 
   async findOne(id: string) {

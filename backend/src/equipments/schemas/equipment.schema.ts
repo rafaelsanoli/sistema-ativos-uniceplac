@@ -25,3 +25,6 @@ export class Equipment {
 }
 
 export const EquipmentSchema = SchemaFactory.createForClass(Equipment);
+
+EquipmentSchema.index({ type: 1, status: 1, createdAt: -1 });
+EquipmentSchema.index({ name: 1 });

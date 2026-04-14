@@ -6,6 +6,7 @@ import * as Joi from 'joi';
 import { ThrottlerGuard, ThrottlerModule } from '@nestjs/throttler';
 import { AuthModule } from './auth/auth.module';
 import { EquipmentsModule } from './equipments/equipments.module';
+import { ReportsModule } from './reports/reports.module';
 
 @Module({
   imports: [
@@ -48,6 +49,7 @@ import { EquipmentsModule } from './equipments/equipments.module';
     }),
     AuthModule,
     EquipmentsModule,
+    ReportsModule,
   ],
   providers: [
     {
