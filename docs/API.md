@@ -2,7 +2,34 @@
 
 Base URL local: `http://localhost:3001`
 
-## 1. Criar equipamento
+## 0. Autenticacao
+
+### Login
+
+`POST /auth/login`
+
+```json
+{
+  "email": "admin@uniceplac.local",
+  "password": "admin12345"
+}
+```
+
+Retorna dados do usuario e registra sessao em cookie HttpOnly.
+
+### Sessao atual
+
+`GET /auth/me`
+
+### Logout
+
+`POST /auth/logout`
+
+## 1. Regra de acesso
+
+Todos os endpoints de equipamentos e relatorios exigem autenticacao.
+
+## 2. Criar equipamento
 
 `POST /equipments`
 
@@ -17,7 +44,7 @@ Body:
 }
 ```
 
-## 2. Listar equipamentos
+## 3. Listar equipamentos
 
 `GET /equipments`
 
@@ -26,16 +53,32 @@ Filtros opcionais:
 - `type`: `MONITOR`, `CPU`, `TECLADO`
 - `status`: `ATIVO`, `MANUTENCAO`
 - `search`: texto para nome
+- `page`: pagina atual
+- `limit`: itens por pagina (5 a 50)
 
 Exemplo:
 
-`GET /equipments?type=CPU&status=ATIVO&search=lab`
+`GET /equipments?type=CPU&status=ATIVO&search=lab&page=1&limit=10`
 
-## 3. Buscar por ID
+Resposta:
+
+```json
+{
+  "data": [],
+  "meta": {
+    "total": 0,
+    "page": 1,
+    "limit": 10,
+    "totalPages": 1
+  }
+}
+```
+
+## 4. Buscar por ID
 
 `GET /equipments/:id`
 
-## 4. Atualizar equipamento
+## 5. Atualizar equipamento
 
 `PATCH /equipments/:id`
 
@@ -47,13 +90,32 @@ Body (parcial):
 }
 ```
 
-## 5. Remover equipamento
+## 6. Remover equipamento
 
 `DELETE /equipments/:id`
 
 Resposta esperada: `204 No Content`.
 
-## 6. Erros comuns
+## 7. Resumo operacional
+
+`GET /reports/equipments/summary`
+
+Retorna total geral, total por status e total por tipo.
+
+## 8. Exportacao por endpoint
+
+`GET /reports/equipments/export?format=csv`
+
+`GET /reports/equipments/export?format=json`
+
+Filtros opcionais aceitos:
+
+- `type`
+- `status`
+- `search`
+
+## 9. Erros comuns
 
 - `400 Bad Request`: payload invalido.
+- `401 Unauthorized`: sessao invalida ou ausente.
 - `404 Not Found`: equipamento nao encontrado.

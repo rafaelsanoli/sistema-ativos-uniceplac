@@ -1,5 +1,9 @@
 # Decisoes Tecnicas
 
+## Contexto da segunda fase
+
+Nesta etapa, o foco foi elevar o nivel de robustez da aplicacao com seguranca, autenticacao, exportacao por interface e refinamento visual em tema dark.
+
 ## 1. Escolha do backend: NestJS
 
 Optei por NestJS para estruturar o backend com arquitetura modular e separacao clara entre controller/service/dto/schema. Isso ajuda em manutencao e escalabilidade.
@@ -26,9 +30,30 @@ Os filtros foram implementados no endpoint de listagem, para evitar carregar tod
 
 ## 7. Desafio extra de exportacao
 
-Implementei um script independente para gerar JSON/CSV a partir da base real. A abordagem simula uma integracao de relatorios sem acoplar a exportacao ao fluxo principal da API.
+Substitui o script de terminal por endpoint de exportacao protegido (`/reports/equipments/export`) e consumo direto no frontend. Assim, todo o fluxo fica acessivel pela interface.
 
-## 8. Trade-offs assumidos
+## 8. Autenticacao e sessao segura
 
-1. Autenticacao nao foi implementada por nao ser requisito obrigatorio.
-2. Testes automatizados avancados (unitarios/e2e com banco de teste) ficaram como evolucao futura por priorizacao do escopo principal.
+Implementei autenticacao JWT com cookie HttpOnly para reduzir exposicao de token no cliente e proteger os endpoints de equipamentos e relatorios.
+
+## 9. Hardening da API
+
+Foram adicionados:
+
+1. `helmet` para headers de seguranca.
+2. `express-mongo-sanitize` para higienizacao de payloads.
+3. `@nestjs/throttler` para rate limit global.
+4. `compression` para reduzir custo de trafego.
+
+## 10. Otimizacao de consultas
+
+Adotei a paginação no endpoint de listagem e criei índices em campos de filtro para reduzir custo de consulta e melhorar tempo de resposta sob volume maior de dados.
+
+## 11. Direcao visual do frontend
+
+O tema foi feito em darkmode com contraste alto e acentos em laranja e verde inspirados no simbolo da logo da UNICEPLAC. O objetivo foi deixar a interface mais marcante sem perder a legibilidade.
+
+## 12. Trade-offs assumidos
+
+1. O fluxo de usuarios e focado em perfil administrativo unico para manter escopo objetivo.
+2. Ainda ha espaco para evoluir com testes automatizados mais profundos (especialmente e2e com banco dedicado).

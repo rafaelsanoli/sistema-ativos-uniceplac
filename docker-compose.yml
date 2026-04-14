@@ -15,8 +15,16 @@ services:
     container_name: uniceplac-backend
     restart: unless-stopped
     environment:
+      NODE_ENV: production
       PORT: 3001
       MONGODB_URI: mongodb://mongo:27017/uniceplac-assets
+      FRONTEND_URL: http://localhost:3000
+      JWT_SECRET: altere-este-segredo-no-ambiente
+      JWT_EXPIRES_IN: 8h
+      THROTTLE_TTL: 60
+      THROTTLE_LIMIT: 120
+      ADMIN_EMAIL: admin@uniceplac.local
+      ADMIN_PASSWORD: admin12345
     ports:
       - "3001:3001"
     depends_on:
