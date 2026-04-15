@@ -17,6 +17,10 @@ const spaceMono = Space_Mono({
 export const metadata: Metadata = {
   title: "UNICEPLAC | Gerenciamento de Ativos",
   description: "Dashboard para gerenciamento de ativos de TI.",
+  icons: {
+    icon: "/uniceplac-favicon.svg",
+    shortcut: "/uniceplac-favicon.svg",
+  },
 };
 
 export default function RootLayout({

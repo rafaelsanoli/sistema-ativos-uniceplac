@@ -2,6 +2,7 @@ import {
   Body,
   Controller,
   Get,
+  HttpCode,
   Post,
   Req,
   Res,
@@ -14,12 +15,13 @@ import {
   ApiForbiddenResponse,
   ApiOkResponse,
   ApiOperation,
+  ApiSecurity,
   ApiTags,
   ApiUnauthorizedResponse,
 } from '@nestjs/swagger';
 import { Throttle } from '@nestjs/throttler';
 import type { Request, Response } from 'express';
-import { CSRF_COOKIE_NAME } from './auth.constants';
+import { CSRF_COOKIE_NAME, CSRF_HEADER_NAME } from './auth.constants';
 import { AuthService } from './auth.service';
 import { SkipCsrf } from './decorators/skip-csrf.decorator';
 import { LoginDto } from './dto/login.dto';
@@ -39,6 +41,7 @@ export class AuthController {
   constructor(private readonly authService: AuthService) {}
 
   @Post('login')
+  @HttpCode(200)
   @Throttle({ default: { limit: 10, ttl: 60_000 } })
   @SkipCsrf()
   @ApiOperation({ summary: 'Autenticar usuario administrativo' })
@@ -71,7 +74,9 @@ export class AuthController {
 
   @UseGuards(JwtAuthGuard)
   @Post('logout')
+  @HttpCode(200)
   @ApiCookieAuth()
+  @ApiSecurity(CSRF_HEADER_NAME)
   @ApiOperation({ summary: 'Encerrar sessao atual' })
   @ApiOkResponse({ description: 'Logout realizado com sucesso.' })
   @ApiForbiddenResponse({ description: 'Token CSRF invalido.' })

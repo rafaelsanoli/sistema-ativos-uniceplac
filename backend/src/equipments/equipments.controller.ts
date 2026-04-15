@@ -12,12 +12,15 @@ import {
   UseGuards,
 } from '@nestjs/common';
 import {
+  ApiForbiddenResponse,
   ApiCookieAuth,
   ApiNoContentResponse,
   ApiOkResponse,
   ApiOperation,
+  ApiSecurity,
   ApiTags,
 } from '@nestjs/swagger';
+import { CSRF_HEADER_NAME } from '../auth/auth.constants';
 import { JwtAuthGuard } from '../auth/guards/jwt-auth.guard';
 import { CreateEquipmentDto } from './dto/create-equipment.dto';
 import { FilterEquipmentDto } from './dto/filter-equipment.dto';
@@ -32,8 +35,11 @@ export class EquipmentsController {
   constructor(private readonly equipmentsService: EquipmentsService) {}
 
   @Post()
+  @HttpCode(HttpStatus.OK)
+  @ApiSecurity(CSRF_HEADER_NAME)
   @ApiOperation({ summary: 'Criar equipamento' })
   @ApiOkResponse({ description: 'Equipamento criado com sucesso.' })
+  @ApiForbiddenResponse({ description: 'Token CSRF invalido.' })
   create(@Body() createEquipmentDto: CreateEquipmentDto) {
     return this.equipmentsService.create(createEquipmentDto);
   }
@@ -53,8 +59,10 @@ export class EquipmentsController {
   }
 
   @Patch(':id')
+  @ApiSecurity(CSRF_HEADER_NAME)
   @ApiOperation({ summary: 'Atualizar equipamento' })
   @ApiOkResponse({ description: 'Equipamento atualizado com sucesso.' })
+  @ApiForbiddenResponse({ description: 'Token CSRF invalido.' })
   update(
     @Param('id') id: string,
     @Body() updateEquipmentDto: UpdateEquipmentDto,
@@ -64,8 +72,10 @@ export class EquipmentsController {
 
   @Delete(':id')
   @HttpCode(HttpStatus.NO_CONTENT)
+  @ApiSecurity(CSRF_HEADER_NAME)
   @ApiOperation({ summary: 'Remover equipamento' })
   @ApiNoContentResponse({ description: 'Equipamento removido com sucesso.' })
+  @ApiForbiddenResponse({ description: 'Token CSRF invalido.' })
   async remove(@Param('id') id: string) {
     await this.equipmentsService.remove(id);
   }

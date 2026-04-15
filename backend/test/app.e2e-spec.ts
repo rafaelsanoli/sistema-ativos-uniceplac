@@ -49,7 +49,7 @@ describe('AuthController (e2e)', () => {
     return request(app.getHttpServer())
       .post('/auth/login')
       .send({ email: 'admin@uniceplac.com', password: 'admin12345' })
-      .expect(201)
+      .expect(200)
       .expect((response) => {
         const body = response.body as { user: { email: string } };
         expect(body.user.email).toBe('admin@uniceplac.com');

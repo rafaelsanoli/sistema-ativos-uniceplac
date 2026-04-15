@@ -6,7 +6,11 @@ import {
 } from '@nestjs/common';
 import { Reflector } from '@nestjs/core';
 import { Request } from 'express';
-import { CSRF_COOKIE_NAME, CSRF_HEADER_NAME } from '../auth.constants';
+import {
+  AUTH_COOKIE_NAME,
+  CSRF_COOKIE_NAME,
+  CSRF_HEADER_NAME,
+} from '../auth.constants';
 import { SKIP_CSRF_KEY } from '../decorators/skip-csrf.decorator';
 
 type HeaderValue = string | string[] | undefined;
@@ -26,7 +30,22 @@ export class CsrfGuard implements CanActivate {
     }
 
     const request = context.switchToHttp().getRequest<Request>();
+    const requestPath = request.path ?? request.originalUrl ?? '';
+
+    // Keep login endpoint always accessible for initial session creation.
+    if (
+      request.method.toUpperCase() === 'POST' &&
+      requestPath.startsWith('/auth/login')
+    ) {
+      return true;
+    }
+
     if (['GET', 'HEAD', 'OPTIONS'].includes(request.method.toUpperCase())) {
+      return true;
+    }
+
+    const hasAuthCookie = Boolean(request.cookies?.[AUTH_COOKIE_NAME]);
+    if (!hasAuthCookie) {
       return true;
     }
 
