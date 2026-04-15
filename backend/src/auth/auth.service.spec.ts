@@ -105,6 +105,13 @@ describe('AuthService', () => {
     const result = service.logout(response);
 
     expect(result.message).toContain('Logout');
-    expect(clearCookieMock).toHaveBeenCalledWith(AUTH_COOKIE_NAME);
+    expect(clearCookieMock).toHaveBeenCalledWith(
+      AUTH_COOKIE_NAME,
+      expect.objectContaining({
+        secure: false,
+        sameSite: 'lax',
+        path: '/',
+      }),
+    );
   });
 });

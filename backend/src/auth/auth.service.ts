@@ -3,7 +3,7 @@ import { ConfigService } from '@nestjs/config';
 import { JwtService } from '@nestjs/jwt';
 import * as bcrypt from 'bcrypt';
 import { randomBytes } from 'crypto';
-import { Response } from 'express';
+import { type CookieOptions, Response } from 'express';
 import { UsersService } from '../users/users.service';
 import { AUTH_COOKIE_NAME, CSRF_COOKIE_NAME } from './auth.constants';
 import { LoginDto } from './dto/login.dto';
@@ -81,8 +81,15 @@ export class AuthService {
   }
 
   logout(response: Response) {
-    response.clearCookie(AUTH_COOKIE_NAME);
-    response.clearCookie(CSRF_COOKIE_NAME);
+    const cookieOptions = this.getCookieOptions();
+    const clearOptions = {
+      secure: cookieOptions.secure,
+      sameSite: cookieOptions.sameSite,
+      path: cookieOptions.path,
+    };
+
+    response.clearCookie(AUTH_COOKIE_NAME, clearOptions);
+    response.clearCookie(CSRF_COOKIE_NAME, clearOptions);
 
     return {
       message: 'Logout realizado com sucesso.',
@@ -93,14 +100,20 @@ export class AuthService {
     return randomBytes(32).toString('hex');
   }
 
-  private getCookieOptions() {
+  private getCookieOptions(): Pick<
+    CookieOptions,
+    'secure' | 'sameSite' | 'maxAge' | 'path'
+  > {
     const isProduction =
       this.configService.get<string>('NODE_ENV', 'development') ===
       'production';
+    const sameSite: CookieOptions['sameSite'] = isProduction ? 'none' : 'lax';
 
     return {
       secure: isProduction,
-      sameSite: 'lax' as const,
+      // In production, frontend and backend run on different origins,
+      // so browser requires SameSite=None for credentialed cross-origin requests.
+      sameSite,
       maxAge: 8 * 60 * 60 * 1000,
       path: '/',
     };
