@@ -1,9 +1,11 @@
 import { ValidationPipe } from '@nestjs/common';
+import { ConfigService } from '@nestjs/config';
 import compression from 'compression';
 import cookieParser from 'cookie-parser';
 import helmet from 'helmet';
 import { NestFactory } from '@nestjs/core';
-import { ConfigService } from '@nestjs/config';
+import { DocumentBuilder, SwaggerModule } from '@nestjs/swagger';
+import { AUTH_COOKIE_NAME, CSRF_HEADER_NAME } from './auth/auth.constants';
 import { AppModule } from './app.module';
 
 async function bootstrap() {
@@ -33,6 +35,33 @@ async function bootstrap() {
       transform: true,
     }),
   );
+
+  const swaggerConfig = new DocumentBuilder()
+    .setTitle('UNICEPLAC - Sistema de Ativos API')
+    .setDescription('Documentacao da API para avaliacao tecnica.')
+    .setVersion('1.0.0')
+    .addCookieAuth(AUTH_COOKIE_NAME, {
+      type: 'apiKey',
+      in: 'cookie',
+      name: AUTH_COOKIE_NAME,
+    })
+    .addApiKey(
+      {
+        type: 'apiKey',
+        in: 'header',
+        name: CSRF_HEADER_NAME,
+      },
+      CSRF_HEADER_NAME,
+    )
+    .build();
+
+  const document = SwaggerModule.createDocument(app, swaggerConfig);
+  SwaggerModule.setup('docs', app, document, {
+    swaggerOptions: {
+      persistAuthorization: true,
+    },
+  });
+
   const port = configService.get<number>('PORT', 3001);
   await app.listen(port);
 }

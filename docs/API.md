@@ -2,6 +2,11 @@
 
 Base URL local: `http://localhost:3001`
 
+## Swagger / OpenAPI
+
+- UI interativa: `http://localhost:3001/docs`
+- Colecao de avaliacao: `docs/postman/UNICEPLAC-Ativos.postman_collection.json`
+
 ## 0. Autenticacao
 
 ### Login

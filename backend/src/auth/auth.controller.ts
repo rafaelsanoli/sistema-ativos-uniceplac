@@ -8,6 +8,15 @@ import {
   UnauthorizedException,
   UseGuards,
 } from '@nestjs/common';
+import {
+  ApiBody,
+  ApiCookieAuth,
+  ApiForbiddenResponse,
+  ApiOkResponse,
+  ApiOperation,
+  ApiTags,
+  ApiUnauthorizedResponse,
+} from '@nestjs/swagger';
 import { Throttle } from '@nestjs/throttler';
 import type { Request, Response } from 'express';
 import { CSRF_COOKIE_NAME } from './auth.constants';
@@ -24,6 +33,7 @@ type UserRequest = Request & {
   };
 };
 
+@ApiTags('Auth')
 @Controller('auth')
 export class AuthController {
   constructor(private readonly authService: AuthService) {}
@@ -31,6 +41,10 @@ export class AuthController {
   @Post('login')
   @Throttle({ default: { limit: 10, ttl: 60_000 } })
   @SkipCsrf()
+  @ApiOperation({ summary: 'Autenticar usuario administrativo' })
+  @ApiBody({ type: LoginDto })
+  @ApiOkResponse({ description: 'Login realizado com sucesso.' })
+  @ApiUnauthorizedResponse({ description: 'Credenciais invalidas.' })
   login(
     @Body() loginDto: LoginDto,
     @Res({ passthrough: true }) response: Response,
@@ -40,6 +54,10 @@ export class AuthController {
 
   @UseGuards(JwtAuthGuard)
   @Get('me')
+  @ApiCookieAuth()
+  @ApiOperation({ summary: 'Obter sessao atual' })
+  @ApiOkResponse({ description: 'Sessao valida.' })
+  @ApiUnauthorizedResponse({ description: 'Sessao invalida ou expirada.' })
   me(@Req() request: UserRequest) {
     if (!request.user) {
       throw new UnauthorizedException('Sessao invalida ou expirada.');
@@ -53,6 +71,10 @@ export class AuthController {
 
   @UseGuards(JwtAuthGuard)
   @Post('logout')
+  @ApiCookieAuth()
+  @ApiOperation({ summary: 'Encerrar sessao atual' })
+  @ApiOkResponse({ description: 'Logout realizado com sucesso.' })
+  @ApiForbiddenResponse({ description: 'Token CSRF invalido.' })
   logout(@Res({ passthrough: true }) response: Response) {
     return this.authService.logout(response);
   }

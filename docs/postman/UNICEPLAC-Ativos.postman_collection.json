@@ -1,0 +1,194 @@
+{
+  "info": {
+    "name": "UNICEPLAC - Sistema de Ativos",
+    "schema": "https://schema.getpostman.com/json/collection/v2.1.0/collection.json",
+    "description": "Colecao para avaliacao tecnica da API de gerenciamento de ativos."
+  },
+  "variable": [
+    {
+      "key": "baseUrl",
+      "value": "http://localhost:3001"
+    },
+    {
+      "key": "adminEmail",
+      "value": "admin@uniceplac.com"
+    },
+    {
+      "key": "adminPassword",
+      "value": "admin12345"
+    },
+    {
+      "key": "csrfToken",
+      "value": ""
+    },
+    {
+      "key": "equipmentId",
+      "value": ""
+    }
+  ],
+  "item": [
+    {
+      "name": "Auth - Login",
+      "request": {
+        "method": "POST",
+        "header": [
+          {
+            "key": "Content-Type",
+            "value": "application/json"
+          }
+        ],
+        "body": {
+          "mode": "raw",
+          "raw": "{\n  \"email\": \"{{adminEmail}}\",\n  \"password\": \"{{adminPassword}}\"\n}"
+        },
+        "url": {
+          "raw": "{{baseUrl}}/auth/login",
+          "host": [
+            "{{baseUrl}}"
+          ],
+          "path": [
+            "auth",
+            "login"
+          ]
+        }
+      },
+      "event": [
+        {
+          "listen": "test",
+          "script": {
+            "type": "text/javascript",
+            "exec": [
+              "pm.test('Login 201', function () { pm.response.to.have.status(201); });",
+              "var data = pm.response.json();",
+              "if (data && data.csrfToken) { pm.collectionVariables.set('csrfToken', data.csrfToken); }"
+            ]
+          }
+        }
+      ]
+    },
+    {
+      "name": "Auth - Sessao atual",
+      "request": {
+        "method": "GET",
+        "url": {
+          "raw": "{{baseUrl}}/auth/me",
+          "host": [
+            "{{baseUrl}}"
+          ],
+          "path": [
+            "auth",
+            "me"
+          ]
+        }
+      }
+    },
+    {
+      "name": "Equipments - Listar",
+      "request": {
+        "method": "GET",
+        "url": {
+          "raw": "{{baseUrl}}/equipments?page=1&limit=10",
+          "host": [
+            "{{baseUrl}}"
+          ],
+          "path": [
+            "equipments"
+          ],
+          "query": [
+            {
+              "key": "page",
+              "value": "1"
+            },
+            {
+              "key": "limit",
+              "value": "10"
+            }
+          ]
+        }
+      }
+    },
+    {
+      "name": "Equipments - Criar",
+      "request": {
+        "method": "POST",
+        "header": [
+          {
+            "key": "Content-Type",
+            "value": "application/json"
+          },
+          {
+            "key": "x-csrf-token",
+            "value": "{{csrfToken}}"
+          }
+        ],
+        "body": {
+          "mode": "raw",
+          "raw": "{\n  \"name\": \"Monitor Avaliacao 01\",\n  \"type\": \"MONITOR\",\n  \"acquisitionDate\": \"2026-04-14\",\n  \"status\": \"ATIVO\"\n}"
+        },
+        "url": {
+          "raw": "{{baseUrl}}/equipments",
+          "host": [
+            "{{baseUrl}}"
+          ],
+          "path": [
+            "equipments"
+          ]
+        }
+      },
+      "event": [
+        {
+          "listen": "test",
+          "script": {
+            "type": "text/javascript",
+            "exec": [
+              "if (pm.response.code === 201 || pm.response.code === 200) {",
+              "  var data = pm.response.json();",
+              "  if (data && data._id) { pm.collectionVariables.set('equipmentId', data._id); }",
+              "}"
+            ]
+          }
+        }
+      ]
+    },
+    {
+      "name": "Reports - Summary",
+      "request": {
+        "method": "GET",
+        "url": {
+          "raw": "{{baseUrl}}/reports/equipments/summary",
+          "host": [
+            "{{baseUrl}}"
+          ],
+          "path": [
+            "reports",
+            "equipments",
+            "summary"
+          ]
+        }
+      }
+    },
+    {
+      "name": "Reports - Export CSV",
+      "request": {
+        "method": "GET",
+        "url": {
+          "raw": "{{baseUrl}}/reports/equipments/export?format=csv",
+          "host": [
+            "{{baseUrl}}"
+          ],
+          "path": [
+            "reports",
+            "equipments",
+            "export"
+          ],
+          "query": [
+            {
+              "key": "format",
+              "value": "csv"
+            }
+          ]
+        }
+      }
+    }
+  ]
+}

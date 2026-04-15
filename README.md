@@ -65,6 +65,8 @@ npm run start:dev
 
 API disponivel em: `http://localhost:3001`
 
+Documentacao Swagger: `http://localhost:3001/docs`
+
 Credenciais iniciais (configuradas por ambiente):
 
 - Email: valor de `ADMIN_EMAIL`
@@ -105,3 +107,4 @@ Realizada pela propria interface, no card de resumo operacional:
 - `docs/ARQUITETURA.md`
 - `docs/DECISOES.md`
 - `docs/API.md`
+- `docs/postman/UNICEPLAC-Ativos.postman_collection.json`

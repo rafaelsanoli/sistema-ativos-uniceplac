@@ -42,6 +42,8 @@ npm run start:dev
 
 Servidor local: http://localhost:3001
 
+Swagger local: http://localhost:3001/docs
+
 ## Variaveis de ambiente obrigatorias
 
 - PORT
