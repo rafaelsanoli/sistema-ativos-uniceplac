@@ -35,9 +35,11 @@ describe('AuthService', () => {
   });
 
   it('deve realizar login e setar cookie de sessao', async () => {
+    const cookieMock = jest.fn();
+    const clearCookieMock = jest.fn();
     const response = {
-      cookie: jest.fn(),
-      clearCookie: jest.fn(),
+      cookie: cookieMock,
+      clearCookie: clearCookieMock,
     } as unknown as Response;
 
     usersService.findByEmail.mockResolvedValue({
@@ -64,7 +66,7 @@ describe('AuthService', () => {
     );
 
     expect(result.user.email).toBe('admin@uniceplac.com');
-    expect(response.cookie).toHaveBeenCalledWith(
+    expect(cookieMock).toHaveBeenCalledWith(
       AUTH_COOKIE_NAME,
       'jwt-token',
       expect.objectContaining({
@@ -93,14 +95,16 @@ describe('AuthService', () => {
   });
 
   it('deve limpar cookie no logout', () => {
+    const cookieMock = jest.fn();
+    const clearCookieMock = jest.fn();
     const response = {
-      cookie: jest.fn(),
-      clearCookie: jest.fn(),
+      cookie: cookieMock,
+      clearCookie: clearCookieMock,
     } as unknown as Response;
 
     const result = service.logout(response);
 
     expect(result.message).toContain('Logout');
-    expect(response.clearCookie).toHaveBeenCalledWith(AUTH_COOKIE_NAME);
+    expect(clearCookieMock).toHaveBeenCalledWith(AUTH_COOKIE_NAME);
   });
 });

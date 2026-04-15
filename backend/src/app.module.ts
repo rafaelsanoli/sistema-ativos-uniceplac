@@ -5,6 +5,7 @@ import { MongooseModule } from '@nestjs/mongoose';
 import * as Joi from 'joi';
 import { ThrottlerGuard, ThrottlerModule } from '@nestjs/throttler';
 import { AuthModule } from './auth/auth.module';
+import { CsrfGuard } from './auth/guards/csrf.guard';
 import { EquipmentsModule } from './equipments/equipments.module';
 import { ReportsModule } from './reports/reports.module';
 
@@ -55,6 +56,10 @@ import { ReportsModule } from './reports/reports.module';
     {
       provide: APP_GUARD,
       useClass: ThrottlerGuard,
+    },
+    {
+      provide: APP_GUARD,
+      useClass: CsrfGuard,
     },
   ],
 })

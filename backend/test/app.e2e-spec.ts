@@ -51,7 +51,8 @@ describe('AuthController (e2e)', () => {
       .send({ email: 'admin@uniceplac.com', password: 'admin12345' })
       .expect(201)
       .expect((response) => {
-        expect(response.body.user.email).toBe('admin@uniceplac.com');
+        const body = response.body as { user: { email: string } };
+        expect(body.user.email).toBe('admin@uniceplac.com');
       });
   });
 

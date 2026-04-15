@@ -44,6 +44,10 @@ Foram adicionados:
 2. `@nestjs/throttler` para rate limit global.
 3. `compression` para reduzir custo de trafego.
 
+## 9.1 Protecao CSRF
+
+Adotei estrategia de double-submit cookie: no login a API retorna `csrfToken` e grava cookie de CSRF; em requisicoes de escrita, o frontend envia o mesmo token no header `x-csrf-token`.
+
 ## 10. Otimizacao de consultas
 
 Adotei a paginação no endpoint de listagem e criei índices em campos de filtro para reduzir custo de consulta e melhorar tempo de resposta sob volume maior de dados.

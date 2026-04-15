@@ -10,6 +10,7 @@ API RESTful em NestJS para gerenciamento de equipamentos de TI.
 - Relatorio de resumo operacional.
 - Exportacao de equipamentos em CSV e JSON via endpoint.
 - Autenticacao JWT com cookie HttpOnly.
+- Protecao CSRF em metodos de escrita (POST/PATCH/DELETE).
 - Rate limit global e hardening de seguranca.
 
 ## Stack
@@ -76,6 +77,11 @@ Autenticacao:
 - POST /auth/login
 - GET /auth/me
 - POST /auth/logout
+
+Observacao de seguranca:
+
+- `POST /auth/login` retorna `csrfToken`.
+- Requisicoes de escrita devem enviar header `x-csrf-token` com esse valor.
 
 Equipamentos (protegidos):
 

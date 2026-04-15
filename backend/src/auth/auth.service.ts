@@ -2,9 +2,10 @@ import { Injectable, UnauthorizedException } from '@nestjs/common';
 import { ConfigService } from '@nestjs/config';
 import { JwtService } from '@nestjs/jwt';
 import * as bcrypt from 'bcrypt';
+import { randomBytes } from 'crypto';
 import { Response } from 'express';
 import { UsersService } from '../users/users.service';
-import { AUTH_COOKIE_NAME } from './auth.constants';
+import { AUTH_COOKIE_NAME, CSRF_COOKIE_NAME } from './auth.constants';
 import { LoginDto } from './dto/login.dto';
 
 @Injectable()
@@ -45,15 +46,17 @@ export class AuthService {
       },
     );
 
-    const isProduction =
-      this.configService.get<string>('NODE_ENV', 'development') ===
-      'production';
+    const csrfToken = this.createCsrfToken();
+    const cookieOptions = this.getCookieOptions();
 
     response.cookie(AUTH_COOKIE_NAME, token, {
+      ...cookieOptions,
       httpOnly: true,
-      secure: isProduction,
-      sameSite: 'lax',
-      maxAge: 8 * 60 * 60 * 1000,
+    });
+
+    response.cookie(CSRF_COOKIE_NAME, csrfToken, {
+      ...cookieOptions,
+      httpOnly: false,
     });
 
     return {
@@ -62,24 +65,44 @@ export class AuthService {
         email: user.email,
         role: user.role,
       },
+      csrfToken,
     };
   }
 
-  me(user: { sub: string; email: string; role: string }) {
+  me(user: { sub: string; email: string; role: string }, csrfToken?: string) {
     return {
       user: {
         id: user.sub,
         email: user.email,
         role: user.role,
       },
+      csrfToken,
     };
   }
 
   logout(response: Response) {
     response.clearCookie(AUTH_COOKIE_NAME);
+    response.clearCookie(CSRF_COOKIE_NAME);
 
     return {
       message: 'Logout realizado com sucesso.',
+    };
+  }
+
+  private createCsrfToken() {
+    return randomBytes(32).toString('hex');
+  }
+
+  private getCookieOptions() {
+    const isProduction =
+      this.configService.get<string>('NODE_ENV', 'development') ===
+      'production';
+
+    return {
+      secure: isProduction,
+      sameSite: 'lax' as const,
+      maxAge: 8 * 60 * 60 * 1000,
+      path: '/',
     };
   }
 }

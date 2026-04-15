@@ -28,6 +28,7 @@ O frontend consome a API via HTTP e a API persiste dados no MongoDB.
 - `@nestjs/throttler` para rate limit global.
 - `compression` para resposta HTTP otimizada.
 - JWT em cookie HttpOnly para sessao protegida.
+- CSRF guard global para metodos de escrita.
 - Indices de consulta no MongoDB para listagem e filtros.
 
 ### 2.3 Modelo de dados
@@ -87,4 +88,5 @@ Uma pagina unica concentra:
 
 - URL base da API configurada por `NEXT_PUBLIC_API_URL`.
 - Requisicoes com `fetch` + `credentials: include` no cliente.
+- Header `x-csrf-token` enviado automaticamente em operacoes de escrita.
 - Tratamento de erros com mensagens de feedback na interface.

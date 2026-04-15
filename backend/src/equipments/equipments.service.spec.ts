@@ -45,7 +45,7 @@ describe('EquipmentsService', () => {
   });
 
   it('deve retornar listagem paginada com meta', async () => {
-    const result = await service.findAll({
+    const resultPromise = service.findAll({
       page: 2,
       limit: 10,
       search: 'Monitor',
@@ -53,19 +53,25 @@ describe('EquipmentsService', () => {
       status: EquipmentStatus.ATIVO,
     });
 
+    await expect(resultPromise).resolves.toMatchObject({
+      meta: {
+        page: 2,
+        total: 3,
+      },
+    });
+
     expect(equipmentModel.find).toHaveBeenCalledWith(
       expect.objectContaining({
         type: EquipmentType.MONITOR,
         status: EquipmentStatus.ATIVO,
-        name: expect.objectContaining({
+        name: {
           $regex: 'Monitor',
-        }),
+          $options: 'i',
+        },
       }),
     );
     expect(findChain.skip).toHaveBeenCalledWith(10);
     expect(findChain.limit).toHaveBeenCalledWith(10);
-    expect(result.meta.page).toBe(2);
-    expect(result.meta.total).toBe(3);
   });
 
   it('deve lancar not found para id invalido', async () => {

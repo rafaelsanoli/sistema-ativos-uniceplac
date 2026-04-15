@@ -44,7 +44,7 @@ Construir uma aplicacao Full-Stack para gerenciar equipamentos de laboratorio co
 6. Interface responsiva para desktop e mobile em tema dark.
 7. Exportacao JSON/CSV acionada no frontend (sem comandos manuais).
 8. Autenticacao com JWT em cookie HttpOnly.
-9. Rate limit, headers de seguranca e sanitizacao de entrada.
+9. Rate limit, headers de seguranca e protecao CSRF para escrita.
 
 ## 5. Como executar localmente
 
@@ -95,6 +95,7 @@ Realizada pela propria interface, no card de resumo operacional:
 - Separacao de responsabilidades (controller, service, schema, dto).
 - Autenticacao e autorizacao por guard JWT.
 - Middleware de seguranca (`helmet` e `throttler`).
+- Protecao CSRF com padrao double-submit cookie.
 - Query otimizada com pagina, limite e indices no MongoDB.
 - Suite de testes com cenarios unitarios para servicos criticos e e2e de autenticacao.
 - Padrao de codigo validado com ESLint.

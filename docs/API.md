@@ -17,6 +17,19 @@ Base URL local: `http://localhost:3001`
 
 Retorna dados do usuario e registra sessao em cookie HttpOnly.
 
+Exemplo de resposta:
+
+```json
+{
+  "user": {
+    "id": "...",
+    "email": "admin@uniceplac.com",
+    "role": "ADMIN"
+  },
+  "csrfToken": "token-gerado-no-login"
+}
+```
+
 ### Sessao atual
 
 `GET /auth/me`
@@ -28,6 +41,14 @@ Retorna dados do usuario e registra sessao em cookie HttpOnly.
 ## 1. Regra de acesso
 
 Todos os endpoints de equipamentos e relatorios exigem autenticacao.
+
+## 1.1 Regra CSRF
+
+Para `POST`, `PATCH`, `PUT` e `DELETE`, envie o header abaixo:
+
+- `x-csrf-token`: token retornado no login e em `/auth/me`.
+
+Sem esse header, a API retorna `403 Forbidden`.
 
 ## 2. Criar equipamento
 
@@ -118,4 +139,5 @@ Filtros opcionais aceitos:
 
 - `400 Bad Request`: payload invalido.
 - `401 Unauthorized`: sessao invalida ou ausente.
+- `403 Forbidden`: token CSRF invalido ou ausente.
 - `404 Not Found`: equipamento nao encontrado.

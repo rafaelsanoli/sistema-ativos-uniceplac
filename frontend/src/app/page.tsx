@@ -21,6 +21,11 @@ type SessionUser = {
   role: "ADMIN";
 };
 
+type SessionPayload = {
+  user: SessionUser;
+  csrfToken?: string;
+};
+
 type EquipmentListResponse = {
   data: Equipment[];
   meta: {
@@ -94,6 +99,7 @@ function labelStatus(value: EquipmentStatus) {
 
 export default function Home() {
   const [session, setSession] = useState<SessionUser | null>(null);
+  const [csrfToken, setCsrfToken] = useState<string>("");
   const [authLoading, setAuthLoading] = useState<boolean>(true);
   const [loginForm, setLoginForm] = useState<LoginForm>(INITIAL_LOGIN);
   const [loginSubmitting, setLoginSubmitting] = useState<boolean>(false);
@@ -147,18 +153,38 @@ export default function Home() {
     return query ? `?${query}` : "";
   }, [filters.limit, filters.page, queryWithoutPagination]);
 
-  async function request<T>(path: string, init?: RequestInit) {
+  const request = useCallback(async <T,>(path: string, init?: RequestInit) => {
+    const method = (init?.method ?? "GET").toUpperCase();
+    const isBodyFormData = init?.body instanceof FormData;
+    const needsCsrf =
+      ["POST", "PUT", "PATCH", "DELETE"].includes(method) &&
+      path !== "/auth/login";
+
+    const headers = {
+      ...(isBodyFormData ? {} : { "Content-Type": "application/json" }),
+      ...(needsCsrf
+        ? (() => {
+            if (!csrfToken) {
+              throw new Error(
+                "Token CSRF ausente. Recarregue a pagina e faca login novamente.",
+              );
+            }
+
+            return { "x-csrf-token": csrfToken };
+          })()
+        : {}),
+      ...(init?.headers ?? {}),
+    };
+
     const response = await fetch(`${API_BASE}${path}`, {
       ...init,
       credentials: "include",
-      headers: {
-        "Content-Type": "application/json",
-        ...(init?.headers ?? {}),
-      },
+      headers,
     });
 
     if (response.status === 401) {
       setSession(null);
+      setCsrfToken("");
       throw new Error("Sessao expirada. Faca login novamente.");
     }
 
@@ -182,12 +208,12 @@ export default function Home() {
     }
 
     return (await response.json()) as T;
-  }
+  }, [csrfToken]);
 
   const fetchSummary = useCallback(async () => {
     const data = await request<SummaryResponse>("/reports/equipments/summary");
     setSummary(data);
-  }, []);
+  }, [request]);
 
   const loadEquipments = useCallback(async () => {
     setLoading(true);
@@ -209,7 +235,7 @@ export default function Home() {
     } finally {
       setLoading(false);
     }
-  }, [queryString]);
+  }, [queryString, request]);
 
   const checkSession = useCallback(async () => {
     try {
@@ -222,10 +248,12 @@ export default function Home() {
         return;
       }
 
-      const payload = (await response.json()) as { user: SessionUser };
+      const payload = (await response.json()) as SessionPayload;
       setSession(payload.user);
+      setCsrfToken(payload.csrfToken ?? "");
     } catch {
       setSession(null);
+      setCsrfToken("");
     } finally {
       setAuthLoading(false);
     }
@@ -270,7 +298,7 @@ export default function Home() {
     setFeedback("");
 
     try {
-      const payload = await request<{ user: SessionUser }>("/auth/login", {
+      const payload = await request<SessionPayload>("/auth/login", {
         method: "POST",
         body: JSON.stringify({
           email: loginForm.email.trim(),
@@ -279,6 +307,7 @@ export default function Home() {
       });
 
       setSession(payload.user);
+  setCsrfToken(payload.csrfToken ?? "");
       setLoginForm((old) => ({ ...old, password: "" }));
       setFeedback("Login realizado com sucesso.");
     } catch (requestError) {
@@ -301,6 +330,7 @@ export default function Home() {
         method: "POST",
       });
       setSession(null);
+      setCsrfToken("");
       setEquipments([]);
       setSummary(null);
       setFeedback("Logout realizado.");
