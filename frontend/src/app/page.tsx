@@ -69,7 +69,23 @@ type LoginForm = {
   password: string;
 };
 
-const API_BASE = process.env.NEXT_PUBLIC_API_URL ?? "http://localhost:3001";
+function resolveApiBase() {
+  const fromEnv = process.env.NEXT_PUBLIC_API_URL?.trim();
+  if (fromEnv) {
+    return fromEnv.replace(/\/+$/, "");
+  }
+
+  if (typeof window !== "undefined") {
+    const host = window.location.hostname;
+    if (host.endsWith(".onrender.com")) {
+      return "https://sistema-ativos-uniceplac.onrender.com";
+    }
+  }
+
+  return "http://localhost:3001";
+}
+
+const API_BASE = resolveApiBase();
 
 const INITIAL_FORM: FormData = {
   name: "",
